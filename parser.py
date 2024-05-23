@@ -1,30 +1,36 @@
-import requests
+import aiohttp
+import asyncio
 from bs4 import BeautifulSoup
+import requests
 
-url = "https://fashionunited.ru/novostee/moda"
+url = 'https://fashionunited.ru/novostee/moda'
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'}
+
+
+async def main():
+    w = open('articles.txt', 'w')
+    w.close()
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers) as response:
+            if response.status == 200:
+                html = await response.text()
+                bs = BeautifulSoup(html, 'html.parser')
+                h2_elements = bs.find_all('h2')
+                p_elements = bs.find_all('p')
+
+                for h2, p in zip(h2_elements, p_elements):
+                    if (h2.text != "loading..." and p.text != "loading..."):
+                        w = open('articles.txt', 'a')
+                        w.write(f'{h2.text}\n')
+                        w.write(f'{p.text}\n')
+                        w.write('\n')
+                        w.close()
+
+            else:
+                print(f"Error fetching content. Status code: {response.status}")
 
 try:
-    response = requests.get(url)
-    response.raise_for_status()
-    bs = BeautifulSoup(response.text, 'lxml')
-    statements = bs.find_all('div', class_='MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-lg-3 e10gwzwj0 css-4cgb18')
-
-    for statement in statements:
-        print(statement)
-        p2_element = statement.find('p2')
-        h_element = statement.find('h')
-
-        if p2_element is not None:
-            p2_text = p2_element.text
-        else:
-            p2_text = "N/A"  # Set a default value if the element is not found
-
-        if h_element is not None:
-            h_text = h_element.text
-        else:
-            h_text = "N/A"  # Set a default value for the header
-
-        print(f"Pair: {p2_text} - {h_text}")
-
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 except requests.RequestException as e:
     print(f"Error fetching content: {e}")
