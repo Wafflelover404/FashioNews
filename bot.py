@@ -30,8 +30,9 @@ def bot_get_news(message):
 
     try:
         articles = read_and_split_articles("articles.txt")
-        for i, article in enumerate(articles):
-            print(f"Article {i + 1}:\n{article}\n")
+        #for i, article in enumerate(articles):
+        #    print(f"Article {i + 1}:\n{article}\n")
+        bot.send_message(chat_id=message.chat_id, text=articles)
 
     except FileNotFoundError:
         bot.send_message(message.chat.id, "Sorry, no news available right now.")
