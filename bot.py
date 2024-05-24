@@ -12,7 +12,7 @@ def read_and_split_articles(file_path):
     return articles
 
 # Replace with your actual token
-bot_token = ''
+bot_token = '6646509104:AAFgLEnyKGxH_AnnOQD6B10M6xRGqK4qaIU'
 bot = telebot.TeleBot(token=bot_token)
 
 keyboard = telebot.types.ReplyKeyboardMarkup(True)
@@ -26,6 +26,7 @@ def bot_start(message):
 
 @bot.message_handler(func=lambda message: message.text == "Get News !")
 def bot_get_news(message):
+    os.system("python3 parser.py")
     if articles:
         send_article(message.chat.id, 0)
     else:
@@ -42,7 +43,7 @@ def send_article(chat_id, index):
             InlineKeyboardButton(f"{len(articles)} »", callback_data=f"goto_{len(articles)-1}") if index < len(articles) - 1 else InlineKeyboardButton(f"· {len(articles)} ·", callback_data="stay")
         )
 
-        bot.send_message(chat_id, f"Article {index+1}:\n\n{articles[index]}", reply_markup=markup)
+        bot.send_message(chat_id, articles[index], reply_markup=markup)
     else:
         bot.send_message(chat_id, "Sorry, no more articles available.")
 
