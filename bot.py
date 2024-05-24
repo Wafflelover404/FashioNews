@@ -12,7 +12,7 @@ def read_and_split_articles(file_path):
     return articles
 
 # Replace with your actual token
-bot_token = '6646509104:AAFgLEnyKGxH_AnnOQD6B10M6xRGqK4qaIU'
+bot_token = ''
 bot = telebot.TeleBot(token=bot_token)
 
 keyboard = telebot.types.ReplyKeyboardMarkup(True)
